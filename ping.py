@@ -36,16 +36,19 @@ def generate_args():
 def subnet_ping(ip, counter, ip_results):
     """ Run ping subprocess and keep track of ping result
         Append results to a list of dictionaries """
+    # Linux/mac
     if os.name == 'posix':
         sub_p = Popen(['ping', '-c', '4', str(ip)], stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    # Windows
     elif os.name == 'nt':
         sub_p = Popen(['ping', '-n', '4', str(ip)], stdout=PIPE, stderr=PIPE, stdin=PIPE)
-    #output = str(sub_p.stdout.read())
+    # grab output and errors from subprocess 
     try:
         output, errors = sub_p.communicate(timeout=15)
     except TimeoutExpired:
         sub_p.kill()
         output, errors = sub_p.communicate()
+    # if you don't see 0 packets in the output, then you must have received packets from the host
     if not '0 packets received' in str(output):
         #print(ip, 'is up!', "\n")
         log_out = "{} is up! \n".format(ip)
@@ -139,6 +142,7 @@ if __name__ == '__main__':
                                                                          dt.minute, dt.second)
             log_file(host_result_summary)
             log_file(datetime_completed)
+            # sort the results from first ip to last by using socket's builtin inet_aton
             ip_results = sorted(ip_results, key=lambda host: socket.inet_aton(host['ip']))
             export_hosts_to_csv(ip_results)
             process_running = False
