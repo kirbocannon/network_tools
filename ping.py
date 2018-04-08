@@ -127,7 +127,7 @@ if __name__ == '__main__':
     total_hosts = len(hosts)
     # create process queue for each ip to be pinged. Prob need to look into better management of this
     processes = []
-    workers = [0 for x in range(50)]
+    workers = [0 for x in range(100)]
     # increment on index of ip_addr because a list is returned
     idx = 0
     # grab number of IPs - later count down to 0
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     try:
         while hosts_len > 0:
             if 0 not in workers:
-                workers = [0 for x in range(50)]
+                workers = [0 for x in range(100)]
             for w in range(len(workers)):
                 p = Process(target=subnet_ping, args=(hosts[idx], counter, ip_results))
                 # start the process
