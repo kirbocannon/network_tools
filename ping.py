@@ -1,8 +1,7 @@
 import argparse
 import csv
 import socket
-import os, shutil, resource
-from operator import itemgetter
+import os, shutil
 from multiprocessing import Process, Manager, Value, Lock
 from subprocess import Popen, PIPE, TimeoutExpired
 from ipaddress import ip_network
@@ -42,7 +41,7 @@ def subnet_ping(ip, counter, ip_results):
     # Windows
     elif os.name == 'nt':
         sub_p = Popen(['ping', '-n', '4', str(ip)], stdout=PIPE, stderr=PIPE, stdin=PIPE)
-    # grab output and errors from subprocess 
+    # grab output and errors from subprocess
     try:
         output, errors = sub_p.communicate(timeout=15)
     except TimeoutExpired:
@@ -83,6 +82,7 @@ if __name__ == '__main__':
     ip_results = manager.list()
     # if mac set number of open files from default 256 to 10240 for this parent process and all subs
     if os.name == 'posix':
+        import resource
         resource.setrlimit(resource.RLIMIT_NOFILE, (10240, 10240))
     hosts = args.hosts
     # shared counter for all processes to have access to increment
