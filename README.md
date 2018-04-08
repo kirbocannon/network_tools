@@ -3,7 +3,8 @@ This script will ping a subnet specified by the user using CIDR notation. Exampl
 in the same directory with the ip and status (up/down) of each host in the specified range. 
 
 # Compatibility
-Python 3.4+ Only
+- Linux, Mac, Windows
+- Python 3.4+
 
 # Arguments
 --hosts = network to ping (CIDR Notation)
