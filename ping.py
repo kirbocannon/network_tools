@@ -1,7 +1,9 @@
 import argparse
+import time
 import csv
 import socket
 import os, shutil
+from datetime import timedelta
 from multiprocessing import Process, Manager, Value, Lock
 from subprocess import Popen, PIPE, TimeoutExpired
 from ipaddress import ip_network
@@ -42,6 +44,9 @@ def subnet_ping(ip, counter, ip_results):
     elif os.name == 'nt':
         sub_p = Popen(['ping', '-n', '4', str(ip)], stdout=PIPE, stderr=PIPE, stdin=PIPE)
     # grab output and errors from subprocess
+    # sleep a bit (mainly for windows because ping return output is rather slow
+    # FIX THIS - use more elegant way of checking if output is finished
+    time.sleep(10)
     try:
         output, errors = sub_p.communicate(timeout=15)
     except TimeoutExpired:
@@ -91,6 +96,7 @@ def export_hosts_to_csv(hosts):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     args = generate_args()
     # use manager for sharing the list between processes
     manager = Manager()
@@ -151,7 +157,7 @@ if __name__ == '__main__':
     process_running = True
     while process_running:
         if not processes[-1].is_alive():
-            print("{} of {} hosts could be pinged.".format(counter.value(), total_hosts))
+            print("--> {} of {} hosts could be pinged.".format(counter.value(), total_hosts))
             host_result_summary = "\n{} of {} hosts could be pinged.".format(counter.value(), total_hosts)
             datetime_completed = "\nCompleted on {}/{}/{} @ {}:{}:{}".format(dt.month,dt.day, dt.year,dt.hour,
                                                                          dt.minute, dt.second)
@@ -163,7 +169,9 @@ if __name__ == '__main__':
             process_running = False
         else:
             continue
-
+    end_time = time.time() - start_time
+    end_time = str(timedelta(seconds=end_time))
+    print("--> Process running time: {} (Hours:Minutes:Seconds)".format(end_time))
 
 
 
