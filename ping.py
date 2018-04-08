@@ -171,7 +171,7 @@ if __name__ == '__main__':
             continue
     end_time = time.time() - start_time
     end_time = str(timedelta(seconds=end_time))
-    print("--> Process running time: {} (Hours:Minutes:Seconds)".format(end_time))
+    print("--> Process running time: {} (Hours:Minutes:Seconds.Microseconds)".format(end_time))
 
 
 
