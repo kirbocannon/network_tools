@@ -33,7 +33,6 @@ def generate_args():
     args = parser.parse_args()
     return args
 
-
 def subnet_ping(ip, counter, ip_results):
     """ Run ping subprocess and keep track of ping result
         Append results to a list of dictionaries """
@@ -71,7 +70,6 @@ def export_hosts_to_csv(hosts):
         writer.writeheader()
         for host in hosts:
             writer.writerow({'ip': host['ip'], 'status': host['status']})
-
 
 
 
