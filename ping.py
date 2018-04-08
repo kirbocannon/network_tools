@@ -47,22 +47,37 @@ def subnet_ping(ip, counter, ip_results):
     except TimeoutExpired:
         sub_p.kill()
         output, errors = sub_p.communicate()
-    # if you don't see 0 packets in the output, then you must have received packets from the host
-    if not '0 packets received' in str(output):
-        #print(ip, 'is up!', "\n")
-        log_out = "{} is up! \n".format(ip)
-        log_file(log_out)
-        counter.increment()
-        ip_results.append({'ip': ip, 'status': 'up'})
-    else:
-        #print(ip, "is down or can't be pinged!", "\n")
-        log_out = "{} is down or can't be pinged! \n".format(ip)
-        log_file(log_out)
-        ip_results.append({'ip': ip, 'status': 'down'})
+    # differences in output of poxis vs nt
+    if os.name == 'posix':
+        # if you don't see 0 packets in the output, then you must have received packets from the host
+        if not '0 packets received' in str(output):
+            #print(ip, 'is up!', "\n")
+            log_out = "{} is up! \n".format(ip)
+            log_file(log_out)
+            counter.increment()
+            ip_results.append({'ip': ip, 'status': 'up'})
+        else:
+            #print(ip, "is down or can't be pinged!", "\n")
+            log_out = "{} is down or can't be pinged! \n".format(ip)
+            log_file(log_out)
+            ip_results.append({'ip': ip, 'status': 'down'})
+    elif os.name == 'nt':
+        if not 'Received = 0' in str(output):
+            #print(ip, 'is up!', "\n")
+            log_out = "{} is up! \n".format(ip)
+            log_file(log_out)
+            counter.increment()
+            ip_results.append({'ip': ip, 'status': 'up'})
+        else:
+            #print(ip, "is down or can't be pinged!", "\n")
+            log_out = "{} is down or can't be pinged! \n".format(ip)
+            log_file(log_out)
+            ip_results.append({'ip': ip, 'status': 'down'})
 
 def log_file(info):
     """ Write to a log file """
-    with open(log_filename, 'a+') as f:
+    ## FIX - Windows seems to have a problem using the global reference log_filename ##
+    with open('ping_log.txt', 'a+') as f:
         f.write(str(info))
 
 def export_hosts_to_csv(hosts):
