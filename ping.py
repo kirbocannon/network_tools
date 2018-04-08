@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # use manager for sharing the list between processes
     manager = Manager()
     ip_results = manager.list()
-    # if mac set number of open files from default 256 to 10240 for this parent process and all subs
+    # if mac/linux set number of open files from default 256 to 10240 for this parent process and all subs
     if os.name == 'posix':
         import resource
         resource.setrlimit(resource.RLIMIT_NOFILE, (10240, 10240))
